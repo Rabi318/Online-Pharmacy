@@ -15,7 +15,7 @@
         <div class="nav-right">
           <button class="hamburger" aria-label="Toggle navigation">☰</button>
           <ul>
-            <li><a href="#">Login</a></li>
+            <li><a id="loginLink" href="#">Login</a></li>
             <li><a href="#">Offers</a></li>
             <li><a href="#">Cart</a></li>
           </ul>
@@ -23,6 +23,255 @@
       </nav>
     </header>
 
+    <!-- Login Modal -->
+    <div class="modal" id="loginModal">
+      <div class="modal-content">
+        <span class="close-button" id="closeModal">&times;</span>
+        <h2>Login</h2>
+        <form id="loginForm">
+          <label for="email">Email:</label>
+          <input
+            type="email"
+            id="email"
+            required
+            placeholder="Enter your email"
+          />
+
+          <label for="password">Password:</label>
+          <input
+            type="password"
+            id="password"
+            required
+            placeholder="Enter your password"
+          />
+
+          <button type="submit">Login</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Search -->
+    <div class="searchDiv">
+      <h2>What you are lookig for?</h2>
+      <div class="search-group">
+        <input type="text" id="search" placeholder="Search" />
+        <button id="searchButton">Search</button>
+      </div>
+    </div>
+
+    <!-- Discover offerings -->
+    <div class="offerings">
+      <h2>Discover our offerings</h2>
+      <div class="cards">
+        <div class="card">
+          <img
+            src="https://assets.pharmeasy.in/apothecary/images/medicine_ff.webp?dim=720x0"
+            alt="Offer 1"
+          />
+
+          <p>Medicine</p>
+        </div>
+        <div class="card">
+          <img
+            src="https://assets.pharmeasy.in/apothecary/images/labtest_ff.webp?dim=720x0"
+            alt="Offer 2"
+          />
+
+          <p>Lab Tests</p>
+        </div>
+        <div class="card">
+          <img
+            src="https://assets.pharmeasy.in/web-assets/images/icon_doc_consult_tile.webp?dim=720x0"
+            alt="Offer 3"
+          />
+          <p>Doctor Consult</p>
+        </div>
+        <div class="card">
+          <img
+            src="https://assets.pharmeasy.in/apothecary/images/healthcare_ff.webp?dim=720x0"
+            alt="Offer 3"
+          />
+          <p>Healthcare</p>
+        </div>
+        <div class="card">
+          <img
+            src="https://assets.pharmeasy.in/apothecary/images/health_blogs_ff.webp?dim=720x0"
+            alt="Offer 3"
+          />
+          <p>Health Blogs</p>
+        </div>
+        <div class="card">
+          <img
+            src="https://assets.pharmeasy.in/apothecary/images/plus_ff.webp?dim=720x0"
+            alt="Offer 3"
+          />
+          <p>Plus</p>
+        </div>
+        <div class="card">
+          <img
+            src="https://assets.pharmeasy.in/apothecary/images/offers_ff.webp?dim=720x0"
+            alt="Offer 3"
+          />
+          <p>Offers</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- banner section -->
+    <div class="banner">
+      <img
+        src="https://cdn01.pharmeasy.in/dam/banner/banner/e0bd0705b3b-Optimum.jpg"
+        alt="banner1"
+      />
+      <img
+        src="https://cdn01.pharmeasy.in/dam/banner/banner/6adbfd1ef0a-Doctor_Consult.jpg"
+        alt="banner2"
+      />
+      <img
+        src="https://cdn01.pharmeasy.in/dam/banner/banner/622c63587d1-SALE27_HP_BAU.jpg"
+        alt="banner3"
+      />
+      <img
+        src="https://cdn01.pharmeasy.in/dam/banner/banner/7313463a2e2-Enterogerminaprimarynew.jpg"
+        alt="banner4"
+      />
+      <img
+        src="https://cdn01.pharmeasy.in/dam/banner/banner/f5adb56bdfb-BPPP.jpg"
+        alt="banner5"
+      />
+      <img
+        src="https://cdn01.pharmeasy.in/dam/banner/banner/dfc1fb45da3-649.jpg"
+        alt="banner6"
+      />
+    </div>
+
+    <!-- Shop By Categories -->
+    <div class="categories">
+      <h2>Shop by categories</h2>
+      <div class="categoryCards">
+        <div class="categoryCard">
+          <img
+            src="https://cdn01.pharmeasy.in/dam/discovery/categoryImages/105ceca515ee30509f93309ae75306aa.png?f=png?dim=360x0"
+            alt="img1"
+          />
+          <p>Diabetes essentials</p>
+        </div>
+        <div class="categoryCard">
+          <img
+            src="https://cdn01.pharmeasy.in/dam/discovery/categoryImages/19962e4261e03a7dbf52e4fbda3a0917.png?f=png?dim=360x0"
+            alt="img2"
+          />
+          <p>Vitamins & Supplements</p>
+        </div>
+        <div class="categoryCard">
+          <img
+            src="https://cdn01.pharmeasy.in/dam/discovery/categoryImages/fcfb1df97b2c3f2bac9cc9bfecae9cbc.png?f=png?dim=360x0"
+            alt="img3"
+          />
+          <p>Summer Essentials</p>
+        </div>
+        <div class="categoryCard">
+          <img
+            src="https://cdn01.pharmeasy.in/dam/discovery/categoryImages/76d1846f4c283274a3c55bb32bb25d15.png?f=png?dim=360x0"
+            alt="img4"
+          />
+          <p>Heart Health</p>
+        </div>
+        <div class="categoryCard">
+          <img
+            src="https://cdn01.pharmeasy.in/dam/discovery/categoryImages/a368dd6d66833c4187d1dceaed1440b4.png?f=png?dim=360x0"
+            alt="img5"
+          />
+          <p>Sports nutrition</p>
+        </div>
+        <div class="categoryCard">
+          <img
+            src="https://cdn01.pharmeasy.in/dam/discovery/categoryImages/d7633a6d4e7f3027bbd9cb4dc50e58cb.png?f=png?dim=360x0"
+            alt="img6"
+          />
+          <p>Ayurvedic care</p>
+        </div>
+        <div class="categoryCard">
+          <img
+            src="https://cdn01.pharmeasy.in/dam/discovery/categoryImages/492ac9585a6b32be8f565566e53cfe74.png?f=png?dim=360x0"
+            alt="img7"
+          />
+          <p>Personal care</p>
+        </div>
+        <div class="categoryCard">
+          <img
+            src="https://cdn01.pharmeasy.in/dam/discovery/categoryImages/0649ff4b2dab3868a72e138b35e47f71.png?f=png?dim=360x0"
+            alt="img8"
+          />
+          <p>Skin care</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Floating WhatsApp Icon -->
+    <a
+      href="https://wa.me/your-number"
+      class="whatsapp-float"
+      target="_blank"
+      rel="noopener"
+    >
+      <img
+        src="https://img.icons8.com/color/48/000000/whatsapp--v1.png"
+        alt="WhatsApp Chat"
+      />
+    </a>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="footer-content">
+        <div class="footer-logo">
+          <h3>Medi-Sure</h3>
+          <p>Your trusted healthcare partner.</p>
+        </div>
+
+        <div class="footer-links">
+          <h4>Quick Links</h4>
+          <ul>
+            <li><a href="#">Home</a></li>
+            <li><a href="#">Offers</a></li>
+            <li><a href="#">Cart</a></li>
+            <li><a href="#">Contact</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-social">
+          <h4>Connect with us</h4>
+          <div class="social-icons">
+            <a href="#"
+              ><img
+                src="https://img.icons8.com/color/48/facebook-new.png"
+                alt="Facebook"
+            /></a>
+            <a href="#"
+              ><img
+                src="https://img.icons8.com/color/48/instagram-new.png"
+                alt="Instagram"
+            /></a>
+            <a href="#"
+              ><img
+                src="https://img.icons8.com/color/48/twitter.png"
+                alt="Twitter"
+            /></a>
+            <a href="#"
+              ><img
+                src="https://img.icons8.com/color/48/linkedin.png"
+                alt="LinkedIn"
+            /></a>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>&copy; 2025 Medi-Sure. All rights reserved.</p>
+      </div>
+    </footer>
+
     <script type="module" src="index.js"></script>
+    <script type="module" src="firebase-config.js"></script>
   </body>
 </html>
