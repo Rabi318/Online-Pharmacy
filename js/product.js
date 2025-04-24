@@ -3,7 +3,7 @@ import {
   signOut,
   onAuthStateChanged,
 } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
-import { auth, database } from "./firbase-config.js";
+import { auth, database } from "../firbase-config.js";
 import {
   get,
   ref,
@@ -12,25 +12,17 @@ import {
   startAt,
   endAt,
 } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-database.js";
-
 const hamburger = document.querySelector(".hamburger");
 const navLinks = document.querySelector(".nav-right ul");
-
-hamburger.addEventListener("click", () => {
-  navLinks.classList.toggle("show");
-});
-
-// At top
 const loginLink = document.getElementById("loginLink");
 const loginModal = document.getElementById("loginModal");
 const closeModal = document.getElementById("closeModal");
 const logoutBtn = document.getElementById("logoutBtn");
 const userMenu = document.getElementById("userMenu");
 const loginForm = document.getElementById("loginForm");
-const searchInput = document.getElementById("search");
-const suggestionsBox = document.getElementById("suggestions");
-const recentBox = document.getElementById("recent");
-const medicineCard = document.getElementById("medicineCard");
+hamburger.addEventListener("click", () => {
+  navLinks.classList.toggle("show");
+});
 document.addEventListener("DOMContentLoaded", () => {
   console.log("Inside the script");
   loginLink.addEventListener("click", (e) => {
@@ -48,8 +40,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 });
-
-// login
 
 loginForm.addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -85,7 +75,6 @@ loginForm.addEventListener("submit", async (e) => {
     console.log(error);
   }
 });
-
 function getInitials(name) {
   const parts = name.trim().split(" ");
 
@@ -97,6 +86,7 @@ function getInitials(name) {
   // Otherwise, first letter of first 2 words
   return (parts[0][0] + parts[1][0]).toUpperCase();
 }
+
 function updateNavbarWithUser(name) {
   const initials = getInitials(name);
   loginLink.textContent = initials;
@@ -157,55 +147,3 @@ function showToast(message, type = "info") {
     toast.remove();
   }, 3000);
 }
-
-//fetch data
-let medicinesArray = [];
-async function fetchMedices() {
-  try {
-    const productsRef = ref(database, "medicines/");
-    const snapshot = await get(productsRef);
-    if (snapshot.exists()) {
-      const data = snapshot.val();
-      medicinesArray = Object.entries(data).map(([id, value]) => ({
-        id,
-        ...value,
-      }));
-      // console.log(medicinesArray);
-    }
-  } catch (error) {
-    console.error("Error fetching medicines:", error);
-  }
-}
-fetchMedices();
-
-searchInput.addEventListener("input", () => {
-  const searchText = searchInput.value.trim().toLowerCase();
-  recentBox.innerHTML = "";
-  if (searchText === "") {
-    suggestionsBox.classList.add("hidden");
-    return;
-  }
-  const matches = medicinesArray
-    .filter((med) => med.name.toLowerCase().startsWith(searchText))
-    .slice(0, 5);
-  if (matches.length > 0) {
-    matches.forEach((med) => {
-      const div = document.createElement("div");
-      div.textContent = med.name;
-      div.classList.add("suggestion-item");
-      div.onclick = () => {
-        searchInput.value = med.name;
-        suggestionsBox.classList.add("hidden");
-        recentBox.innerHTML = "";
-      };
-      recentBox.appendChild(div);
-    });
-    suggestionsBox.classList.remove("hidden");
-  } else {
-    suggestionsBox.classList.add("hidden");
-  }
-});
-
-medicineCard.addEventListener("click", () => {
-  window.location.href = "./user/product.html";
-});

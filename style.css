@@ -139,8 +139,7 @@ img {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  margin-top: 20px 15px;
-
+  margin: 20px 15px;
   text-align: center;
 }
 .searchDiv h2 {
@@ -154,6 +153,7 @@ img {
   max-width: 500px;
   gap: 10px;
   flex-direction: column;
+  position: relative;
 }
 .searchDiv input {
   padding: 10px;
@@ -161,6 +161,8 @@ img {
   border: 1px solid #ccc;
   flex: 1;
   width: 100%;
+  font-size: 16px;
+  box-sizing: border-box;
 }
 .searchDiv button {
   padding: 10px;
@@ -184,6 +186,52 @@ img {
     width: auto;
   }
 }
+.suggestions-box {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: #ffffff;
+  border: 1ps solid #ccc;
+  z-index: 1000;
+  max-height: 300px;
+  overflow-y: auto;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  border-radius: 5px;
+  margin-top: 5px;
+}
+.suggestions-box .section {
+  padding: 10px;
+  border-bottom: 1px solid #f0f0f0;
+}
+.suggestions-box .section strong {
+  display: block;
+  margin-bottom: 5px;
+  color: #0077b6;
+  font-size: 14px;
+  text-align: left;
+}
+.suggestions-box .section div {
+  padding: 8px;
+  cursor: pointer;
+  border-radius: 4px;
+  text-align: left;
+}
+
+.suggestions-box .section div:hover {
+  background-color: #f0f8ff;
+}
+.suggestion-item {
+  padding: 6px 10px;
+  cursor: pointer;
+}
+
+.suggestion-item:hover {
+  background-color: #f2f2f2;
+}
+.hidden {
+  display: none;
+}
 
 /* Offerings */
 .offerings {
@@ -205,6 +253,7 @@ img {
   text-align: center;
   width: 120px;
   transition: transform 0.3s ease;
+  cursor: pointer;
 }
 .card:hover {
   transform: translateY(-5px);
@@ -409,4 +458,25 @@ img {
   font-size: 13px;
   color: #888;
   border-top: 1px solid #ccc;
+}
+
+.user-dropdown {
+  position: relative;
+}
+.user-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background-color: white;
+  border: 1px solid #ccc;
+  padding: 5px;
+  display: none;
+  z-index: 1000;
+}
+.user-menu button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 5px 10px;
+  font-size: 14px;
 }

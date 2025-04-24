@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Medi-Sure</title>
+    <link rel="icon" type="image/png" href="./assets/logo.png" />
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
@@ -15,9 +16,14 @@
         <div class="nav-right">
           <button class="hamburger" aria-label="Toggle navigation">☰</button>
           <ul>
-            <li><a id="loginLink" href="#">Login</a></li>
             <li><a href="#">Offers</a></li>
             <li><a href="#">Cart</a></li>
+            <li class="user-dropdown">
+              <a id="loginLink" href="#">Login</a>
+              <div class="user-menu" id="userMenu" style="display: none">
+                <button id="logoutBtn">Logout</button>
+              </div>
+            </li>
           </ul>
         </div>
       </nav>
@@ -46,6 +52,7 @@
           />
 
           <button type="submit">Login</button>
+          <a href="../user/register.html">If you don't have an account?</a>
         </form>
       </div>
     </div>
@@ -54,8 +61,23 @@
     <div class="searchDiv">
       <h2>What you are lookig for?</h2>
       <div class="search-group">
-        <input type="text" id="search" placeholder="Search" />
-        <button id="searchButton">Search</button>
+        <input
+          type="text"
+          id="search"
+          placeholder="Search"
+          autocomplete="off"
+        />
+        <div id="suggestions" class="suggestions-box hidden">
+          <div class="section">
+            <strong>Recently Searched</strong>
+            <div id="recent"></div>
+          </div>
+          <div class="section">
+            <strong>Frequently Searched</strong>
+            <div id="frequent"></div>
+          </div>
+        </div>
+        <!-- <button id="searchButton">Search</button> -->
       </div>
     </div>
 
@@ -63,7 +85,7 @@
     <div class="offerings">
       <h2>Discover our offerings</h2>
       <div class="cards">
-        <div class="card">
+        <div class="card" id="medicineCard">
           <img
             src="https://assets.pharmeasy.in/apothecary/images/medicine_ff.webp?dim=720x0"
             alt="Offer 1"
