@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Medi-Sure | Cart</title>
+    <link rel="stylesheet" href="../css/cart.css" />
+    <link rel="icon" type="image/png" href="../assets/logo.png" />
+    <!-- <link rel="stylesheet" href="../index.html"> -->
+  </head>
+  <body>
+    <header>
+      <nav class="navbar">
+        <div id="logo" class="navbar-left">
+          <img src="../assets/logo.png" alt="logo" />
+        </div>
+        <div class="nav-right">
+          <button class="hamburger" aria-label="Toggle navigation">☰</button>
+          <ul>
+            <li><a href="#">Offers</a></li>
+            <!-- <li><a id="cartLink" href="#">Cart</a></li> -->
+            <li>
+              <a id="cartLink" href="#">
+                Cart <span id="cart-count" class="cart-count">0</span>
+              </a>
+            </li>
+
+            <li class="user-dropdown">
+              <a id="loginLink" href="#">Login</a>
+              <div class="user-menu" id="userMenu" style="display: none">
+                <button id="logoutBtn">Logout</button>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </nav>
+    </header>
+    <!-- Login Modal -->
+    <div class="modal" id="loginModal">
+      <div class="modal-content">
+        <span class="close-button" id="closeModal">&times;</span>
+        <h2>Login</h2>
+        <form id="loginForm">
+          <label for="email">Email:</label>
+          <input
+            type="email"
+            id="email"
+            required
+            placeholder="Enter your email"
+          />
+
+          <label for="password">Password:</label>
+          <input
+            type="password"
+            id="password"
+            required
+            placeholder="Enter your password"
+          />
+
+          <button type="submit">Login</button>
+          <a href="../user/register.html">If you don't have an account?</a>
+        </form>
+      </div>
+    </div>
+
+    <div class="container">
+      <!-- Left Section -->
+      <div class="left-section">
+        <h2>1 Item in your Cart</h2>
+        <div class="offer-box">
+          <p><strong>EXTRA 15%* OFF unlocked ✨</strong></p>
+          <p>Apply Coupon <strong>SALE27</strong> & get maximum discount</p>
+        </div>
+
+        <div id="cart-items"></div>
+      </div>
+
+      <!-- Right Section -->
+      <div class="right-section">
+        <h3>Cart total: ₹<span id="total-price">0.00</span></h3>
+        <button class="btn">Add Delivery Address ➜</button>
+
+        <div class="coupon">Apply coupon</div>
+
+        <div class="summary-title">Bill Summary</div>
+        <div class="summary-row">
+          <span>Total MRP</span><span id="mrp">₹0.00</span>
+        </div>
+        <div class="summary-row">
+          <span>Delivery charges</span><span class="link">₹0.00</span>
+        </div>
+        <!-- <div class="free-delivery-msg">
+          Login to check if you have Free Delivery
+        </div> -->
+        <div class="summary-row green">
+          <span>Discount on MRP</span><span id="discount">- ₹0.00</span>
+        </div>
+        <div class="summary-row bold">
+          <span>Cart Value</span><span id="final-value">₹0.00</span>
+        </div>
+        <button class="btn pay-btn">Pay Now ➜</button>
+      </div>
+    </div>
+
+    <!-- Payment Method Modal -->
+    <div class="modal" id="paymentModal" style="display: none">
+      <div class="modal-content">
+        <span class="close-button" id="closePayment">&times;</span>
+        <h2>Select Payment Method</h2>
+        <form id="paymentForm">
+          <label
+            ><input type="radio" name="method" value="COD" required /> Cash on
+            Delivery</label
+          ><br />
+          <label
+            ><input type="radio" name="method" value="Card" /> Debit/Credit
+            Card</label
+          ><br />
+          <label><input type="radio" name="method" value="UPI" /> UPI</label
+          ><br /><br />
+          <button type="submit" class="btn pay-confirm">Pay</button>
+        </form>
+      </div>
+    </div>
+
+    <script type="module" src="../firbase-config.js"></script>
+    <script type="module" src="../js/cart.js"></script>
+  </body>
+</html>

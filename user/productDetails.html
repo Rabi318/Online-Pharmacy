@@ -3,9 +3,9 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Medi-Sure | Products</title>
+    <title>Medi-Sure | ProductDetatils</title>
     <link rel="icon" type="image/png" href="../assets/logo.png" />
-    <link rel="stylesheet" href="../css/product.css" />
+    <link rel="stylesheet" href="../css/productDetails.css" />
   </head>
   <body>
     <header>
@@ -17,7 +17,7 @@
           <button class="hamburger" aria-label="Toggle navigation">☰</button>
           <ul>
             <li><a href="#">Offers</a></li>
-            <li><a href="#">Cart</a></li>
+            <li><a id="cartLink" href="#">Cart</a></li>
             <li class="user-dropdown">
               <a id="loginLink" href="#">Login</a>
               <div class="user-menu" id="userMenu" style="display: none">
@@ -56,47 +56,47 @@
       </div>
     </div>
 
-    <!-- Product Card pages -->
-    <!-- <section class="products-section">
-      <h1 class="product-heading">All Products</h1>
-      <div id="product-container" class="product-container"></div>
-    </section> -->
-    <section class="products-section">
-      <div class="filter-container">
-        <h2>Filter Products</h2>
-        <form id="filterForm">
-          <label for="category">Category:</label>
-          <select id="category">
-            <option value="all">All</option>
-            <option value="electronics">Electronics</option>
-            <option value="fashion">Fashion</option>
-            <option value="home">Home</option>
-          </select>
+    <div class="container">
+      <div id="productContainer" class="product-card"></div>
+      <div id="reviewsContainer" class="reviews-section">
+        <h2>Customer Reviews</h2>
 
-          <label for="brand">Brand:</label>
-          <select id="brand">
-            <option value="all">All</option>
-            <option value="brandA">Brand A</option>
-            <option value="brandB">Brand B</option>
-            <option value="brandC">Brand C</option>
-          </select>
+        <!-- Review Form -->
+        <div class="review-form">
+          <div class="star-rating" id="starInput">
+            <span data-star="1">&#9733;</span>
+            <span data-star="2">&#9733;</span>
+            <span data-star="3">&#9733;</span>
+            <span data-star="4">&#9733;</span>
+            <span data-star="5">&#9733;</span>
+          </div>
+          <textarea
+            id="reviewComment"
+            placeholder="Write your review..."
+          ></textarea>
+          <button id="submitReviewBtn">Submit Review</button>
+        </div>
 
-          <label for="sortBy">Sort By:</label>
-          <select id="sortBy">
-            <option value="priceAsc">Price: Low to High</option>
-            <option value="priceDesc">Price: High to Low</option>
-            <option value="nameAsc">Name: A to Z</option>
-            <option value="nameDesc">Name: Z to A</option>
-          </select>
-
-          <button type="submit">Apply Filters</button>
-        </form>
+        <!-- Static Reviews List -->
+        <div class="reviews-list" id="reviewsList">
+          <div class="review">
+            <div class="stars">⭐⭐⭐⭐⭐</div>
+            <p class="review-text">Great product, works as expected!</p>
+            <p class="review-author">- Ramesh</p>
+          </div>
+          <div class="review">
+            <div class="stars">⭐⭐⭐⭐</div>
+            <p class="review-text">Good quality, delivered on time.</p>
+            <p class="review-author">- Priya</p>
+          </div>
+          <div class="review">
+            <div class="stars">⭐⭐⭐</div>
+            <p class="review-text">Average experience, could be better.</p>
+            <p class="review-author">- Amit</p>
+          </div>
+        </div>
       </div>
-
-      <div id="product-container" class="product-container">
-        <!-- Product cards will be generated here -->
-      </div>
-    </section>
+    </div>
 
     <!-- Footer -->
     <footer class="footer">
@@ -147,6 +147,7 @@
         <p>&copy; 2025 Medi-Sure. All rights reserved.</p>
       </div>
     </footer>
-    <script type="module" src="../js/product.js"></script>
+    <script type="module" src="../firbase-config.js"></script>
+    <script type="module" src="../js/productDetails.js"></script>
   </body>
 </html>

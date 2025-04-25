@@ -11,6 +11,8 @@ import {
   orderByChild,
   startAt,
   endAt,
+  set,
+  update,
 } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-database.js";
 const hamburger = document.querySelector(".hamburger");
 const navLinks = document.querySelector(".nav-right ul");
@@ -20,7 +22,8 @@ const closeModal = document.getElementById("closeModal");
 const logoutBtn = document.getElementById("logoutBtn");
 const userMenu = document.getElementById("userMenu");
 const loginForm = document.getElementById("loginForm");
-const productContainer = document.getElementById("product-container");
+const productDetatilsContainer = document.getElementById("productContainer");
+const cartLink = document.getElementById("cartLink");
 hamburger.addEventListener("click", () => {
   navLinks.classList.toggle("show");
 });
@@ -149,94 +152,142 @@ function showToast(message, type = "info") {
   }, 3000);
 }
 
-//Fetch products
-let medArray = [];
-let categories = new Set();
-let brands = new Set();
-async function fetchMedices() {
-  try {
-    const productsRef = ref(database, "medicines/");
-    const snapshot = await get(productsRef);
-    if (snapshot.exists()) {
-      const data = snapshot.val();
+function getProductIdFromUrl() {
+  const params = new URLSearchParams(window.location.search);
+  return params.get("id");
+}
 
-      medArray = Object.entries(data).map(([id, value]) => ({
-        id,
-        ...value,
-      }));
-      medArray.forEach((med) => {
-        categories.add(med.category);
-        brands.add(med.brand);
-      });
-      populateFilters();
-    }
-    // console.log(medArray);
-    displayMedicines(medArray);
-  } catch (error) {
-    console.error("Error fetching medicines:", error);
+const productId = getProductIdFromUrl();
+
+//! Load the product and add to cart
+let med = null;
+async function loadProduct() {
+  const snapShot = await get(ref(database, `medicines/${productId}`));
+  if (!snapShot.exists()) {
+    productDetatilsContainer.innerHTML = `<p style="color:red;">Product not found.</p>`;
+    return;
   }
-}
-function populateFilters() {
-  const categorySelect = document.getElementById("category");
-  categorySelect.innerHTML = `<option value="all">All</option>`;
-  categories.forEach((category) => {
-    const option = document.createElement("option");
-    option.value = category;
-    option.textContent = category;
-    categorySelect.appendChild(option);
-  });
-  const brandSelect = document.getElementById("brand");
-  brandSelect.innerHTML = `<option value="all">All</option>`;
-  brands.forEach((brand) => {
-    const option = document.createElement("option");
-    option.value = brand;
-    option.textContent = brand;
-    brandSelect.appendChild(option);
-  });
-}
+  med = snapShot.val();
+  const discountPercent = Math.round(((med.mrp - med.price) / med.mrp) * 100);
+  productDetatilsContainer.innerHTML = `
+    <img src="${med.image}" alt="${med.name}" class="product-image" />
+    <div class="product-details">
+      <h1 class="product-title">${med.name}</h1>
+      <p class="product-brand">Visit ${med.brand.toUpperCase()} Store</p>
 
-//Product card
-function displayMedicines(medicines) {
-  productContainer.innerHTML = ""; // Clear existing content
-  medicines.forEach((med) => {
-    const discountPercent = Math.round(((med.mrp - med.price) / med.mrp) * 100);
-    const card = document.createElement("div");
-    card.className = "product-card";
-    card.innerHTML = `
-      <img src="${med.image}" alt="${med.name}" />
-      <div class="product-title">${med.name}</div>
-      <div>
-        <span class="mrp">MRP ₹${med.mrp}</span>
+      <div class="product-price">
+        ₹${med.price.toFixed(2)}
+        <span class="original-price">₹${med.mrp}.00</span>
         <span class="discount">${discountPercent}% OFF</span>
       </div>
-      <div class="price">₹${med.price}</div>
-    `;
-    card.addEventListener("click", () => {
-      window.location.href = `./productDetails.html?id=${med.id}`;
+
+      <p class="delivery-info">Inclusive of all taxes</p>
+      <p class="delivery-info">Delivery by <strong>Today, 6:00 pm - 11:00 pm</strong></p>
+
+      <button class="add-to-cart">Add To Cart</button>
+
+      <div class="offer-section">
+        <h3>Offers Just for you</h3>
+        <ul>
+          <li>🎉 Get extra 10% Off on Everherb, Liveasy or PharmEasy products</li>
+          <li>💳 Get Upto ₹100 cashback using CRED pay UPI</li>
+        </ul>
+      </div>
+    </div>
+  `;
+  document
+    .querySelector(".add-to-cart")
+    .addEventListener("click", async (e) => {
+      const button = e.target;
+      const user = auth.currentUser;
+      if (!user) {
+        showToast("Please Login to add item to cart", "error");
+        return;
+      }
+      if (!med.quantity || med.quantity <= 0) {
+        showToast("Out of Stock!", "error");
+        return;
+      }
+      button.disabled = true;
+      const originalText = button.textContent;
+      button.innerHTML = `<span class="spinner"></span> Adding...`;
+      try {
+        const cartRef = ref(database, `carts/${user.uid}/${productId}`);
+        await set(cartRef, {
+          id: productId,
+          name: med.name,
+          image: med.image,
+          price: med.price,
+          brand: med.brand,
+          mrp: med.mrp,
+          category: med.category,
+          quantity: 1,
+        });
+        const newQuantity = (med.quantity || 0) - 1;
+        const productRef = ref(database, `medicines/${productId}`);
+        await update(productRef, { quantity: newQuantity });
+        showToast("Product added to Cart!", "success");
+      } catch (error) {
+        console.log(error);
+        showToast("Failed to add product", "error");
+      } finally {
+        button.disabled = false;
+        button.textContent = originalText;
+      }
     });
-    productContainer.appendChild(card);
+}
+
+//! rating and comments
+let selectedRating = 0;
+
+function setupStaticReviewForm() {
+  const stars = document.querySelectorAll("#starInput span");
+
+  stars.forEach((star, idx) => {
+    star.addEventListener("click", () => {
+      selectedRating = idx + 1;
+      updateStarUI();
+    });
+  });
+
+  function updateStarUI() {
+    stars.forEach((s, i) => {
+      s.classList.toggle("selected", i < selectedRating);
+    });
+  }
+
+  document.getElementById("submitReviewBtn").addEventListener("click", () => {
+    const comment = document.getElementById("reviewComment").value.trim();
+    if (selectedRating === 0 || comment === "") {
+      showToast("Please give a rating and write a comment.", "error");
+      return;
+    }
+
+    const newReview = document.createElement("div");
+    newReview.classList.add("review");
+    newReview.innerHTML = `
+      <div class="stars">${"⭐".repeat(selectedRating)}</div>
+      <p class="review-text">${comment}</p>
+      <p class="review-author">- You</p>
+    `;
+
+    document.getElementById("reviewsList").prepend(newReview);
+    document.getElementById("reviewComment").value = "";
+    selectedRating = 0;
+    updateStarUI();
   });
 }
-document.getElementById("filterForm").addEventListener("submit", (e) => {
+// redirect to cart
+cartLink.addEventListener("click", (e) => {
   e.preventDefault();
-  const selectedCategory = document.getElementById("category").value;
-  const selectedBrand = document.getElementById("brand").value;
-  const sortBy = document.getElementById("sortBy").value;
-  let filteredMedicines = medArray.filter((med) => {
-    const matchesCategory =
-      selectedCategory === "all" || med.category === selectedCategory;
-    const matchesBrand = selectedBrand === "all" || med.brand === selectedBrand;
-    return matchesCategory && matchesBrand;
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      window.location.href = "../user/cart.html";
+    } else {
+      showToast("Please Login to access Your Cart", "error");
+    }
   });
-  if (sortBy === "priceAsc") {
-    filteredMedicines.sort((a, b) => a.price - b.price);
-  } else if (sortBy === "priceDesc") {
-    filteredMedicines.sort((a, b) => b.price - a.price);
-  } else if (sortBy === "nameAsc") {
-    filteredMedicines.sort((a, b) => a.name.localeCompare(b.name));
-  } else if (sortBy === "nameDesc") {
-    filteredMedicines.sort((a, b) => b.name.localeCompare(a.name));
-  }
-  displayMedicines(filteredMedicines);
 });
-fetchMedices();
+setupStaticReviewForm();
+
+loadProduct();

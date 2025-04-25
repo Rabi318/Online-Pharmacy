@@ -135,7 +135,31 @@ onAuthStateChanged(auth, async (user) => {
     }
   }
 });
-
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    try {
+      const userId = user.uid;
+      const cartRef = ref(database, `carts/${userId}`);
+      const cartSnap = await get(cartRef);
+      const cartItems = cartSnap.exists()
+        ? Object.entries(cartSnap.val()).map(([key, data]) => ({
+            key,
+            ...data,
+            quantity: data.quantity || 1,
+          }))
+        : [];
+      updateCartCount(cartItems);
+    } catch {
+      updateCartCount([]);
+    }
+  } else {
+    updateCartCount([]);
+  }
+});
+function updateCartCount(items) {
+  const cartCountElement = document.getElementById("cart-count");
+  cartCountElement.textContent = items.length;
+}
 function closeLoginModal() {
   document.getElementById("loginModal").style.display = "none";
 }

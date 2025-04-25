@@ -11,6 +11,11 @@ import {
   orderByChild,
   startAt,
   endAt,
+  set,
+  update,
+  remove,
+  runTransaction,
+  push,
 } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-database.js";
 const hamburger = document.querySelector(".hamburger");
 const navLinks = document.querySelector(".nav-right ul");
@@ -20,7 +25,13 @@ const closeModal = document.getElementById("closeModal");
 const logoutBtn = document.getElementById("logoutBtn");
 const userMenu = document.getElementById("userMenu");
 const loginForm = document.getElementById("loginForm");
-const productContainer = document.getElementById("product-container");
+const ordersContainer = document.getElementById("orders-container");
+const orderTemplate = document.getElementById("order-template");
+const logo = document.getElementById("logo");
+logo.addEventListener("click", () => {
+  window.location.href = "../index.html";
+});
+
 hamburger.addEventListener("click", () => {
   navLinks.classList.toggle("show");
 });
@@ -112,6 +123,8 @@ logoutBtn.addEventListener("click", async () => {
     loginModal.style.display = "block";
   });
   userMenu.style.display = "none";
+  document.getElementById("cart-count").textContent = "0";
+
   showToast("Logged out successfully", "success");
 });
 
@@ -149,94 +162,108 @@ function showToast(message, type = "info") {
   }, 3000);
 }
 
-//Fetch products
-let medArray = [];
-let categories = new Set();
-let brands = new Set();
-async function fetchMedices() {
-  try {
-    const productsRef = ref(database, "medicines/");
-    const snapshot = await get(productsRef);
-    if (snapshot.exists()) {
-      const data = snapshot.val();
+function updateCartCount(items) {
+  const cartCountElement = document.getElementById("cart-count");
+  cartCountElement.textContent = items.length;
+}
+// onAuthStateChanged(auth, async (user) => {
+//   if (user) {
+//     const userId = user.uid;
+//     const cartRef = ref(database, `carts/${userId}`);
+//     try {
+//       const snapShot = await get(cartRef);
+//       const cartItems = Object.entries(snapShot.val()).map(([key, data]) => ({
+//         key,
+//         ...data,
+//         quantity: data.quantity || 1,
+//       }));
+//       updateCartCount(cartItems);
+//     } catch (error) {
+//       updateCartCount([]);
+//     }
+//   }
+// });
 
-      medArray = Object.entries(data).map(([id, value]) => ({
-        id,
-        ...value,
-      }));
-      medArray.forEach((med) => {
-        categories.add(med.category);
-        brands.add(med.brand);
-      });
-      populateFilters();
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    try {
+      const userId = user.uid;
+      const cartRef = ref(database, `carts/${userId}`);
+      const cartSnap = await get(cartRef);
+      const cartItems = cartSnap.exists()
+        ? Object.entries(cartSnap.val()).map(([key, data]) => ({
+            key,
+            ...data,
+            quantity: data.quantity || 1,
+          }))
+        : [];
+      updateCartCount(cartItems);
+    } catch {
+      updateCartCount([]);
     }
-    // console.log(medArray);
-    displayMedicines(medArray);
-  } catch (error) {
-    console.error("Error fetching medicines:", error);
+  } else {
+    updateCartCount([]);
   }
-}
-function populateFilters() {
-  const categorySelect = document.getElementById("category");
-  categorySelect.innerHTML = `<option value="all">All</option>`;
-  categories.forEach((category) => {
-    const option = document.createElement("option");
-    option.value = category;
-    option.textContent = category;
-    categorySelect.appendChild(option);
-  });
-  const brandSelect = document.getElementById("brand");
-  brandSelect.innerHTML = `<option value="all">All</option>`;
-  brands.forEach((brand) => {
-    const option = document.createElement("option");
-    option.value = brand;
-    option.textContent = brand;
-    brandSelect.appendChild(option);
-  });
-}
+  if (!user) {
+    ordersContainer.innerHTML = `<p>Please log in to view your orders.</p>`;
+    return;
+  }
+  const ordersRef = ref(database, `orders/${user.uid}`);
+  try {
+    const snapshot = await get(ordersRef);
+    if (!snapshot.exists()) {
+      ordersContainer.innerHTML = `<p>You have no orders yet.</p>`;
+      return;
+    }
+    ordersContainer.innerHTML = "";
+    snapshot.forEach((orderSnap) => {
+      const orderData = orderSnap.val();
+      const clone = orderTemplate.content.cloneNode(true);
+      const card = clone.querySelector(".order-card");
 
-//Product card
-function displayMedicines(medicines) {
-  productContainer.innerHTML = ""; // Clear existing content
-  medicines.forEach((med) => {
-    const discountPercent = Math.round(((med.mrp - med.price) / med.mrp) * 100);
-    const card = document.createElement("div");
-    card.className = "product-card";
-    card.innerHTML = `
-      <img src="${med.image}" alt="${med.name}" />
-      <div class="product-title">${med.name}</div>
-      <div>
-        <span class="mrp">MRP ₹${med.mrp}</span>
-        <span class="discount">${discountPercent}% OFF</span>
-      </div>
-      <div class="price">₹${med.price}</div>
-    `;
-    card.addEventListener("click", () => {
-      window.location.href = `./productDetails.html?id=${med.id}`;
+      // Render products
+      const productsEl = clone.querySelector(".products");
+      const productTplEl = productsEl.querySelector(".product-line");
+      productsEl.innerHTML = "";
+      orderData.items.forEach((item) => {
+        const line = productTplEl.cloneNode(true);
+        line.querySelector("img").src = item.image;
+        line.querySelector(".name").textContent = item.name;
+        line.querySelector(
+          ".price"
+        ).textContent = `₹${item.price} × ${item.quantity}`;
+        productsEl.appendChild(line);
+      });
+      // Show order total
+      const totalDiv = document.createElement("div");
+      totalDiv.className = "order-total";
+      totalDiv.textContent = `Total: ₹${orderData.total.toFixed(2)}`;
+      card.insertBefore(totalDiv, card.querySelector(".progress-bar"));
+      // Render progress
+      const statusSteps = [
+        "confirmed",
+        "shipped",
+        "outForDelivery",
+        "delivered",
+      ];
+      const timestamps = orderData.timestamps || {};
+      const lis = clone.querySelectorAll(".progress-bar li");
+      lis.forEach((li) => {
+        const step = li.dataset.step;
+        if (orderData.status[step]) {
+          li.classList.add("completed");
+          const tsKey = `${step}At`;
+          if (timestamps[tsKey]) {
+            const d = new Date(timestamps[tsKey]);
+            li.querySelector(".timestamp").textContent =
+              d.toLocaleDateString() + " " + d.toLocaleTimeString();
+          }
+        }
+      });
+      ordersContainer.appendChild(clone);
     });
-    productContainer.appendChild(card);
-  });
-}
-document.getElementById("filterForm").addEventListener("submit", (e) => {
-  e.preventDefault();
-  const selectedCategory = document.getElementById("category").value;
-  const selectedBrand = document.getElementById("brand").value;
-  const sortBy = document.getElementById("sortBy").value;
-  let filteredMedicines = medArray.filter((med) => {
-    const matchesCategory =
-      selectedCategory === "all" || med.category === selectedCategory;
-    const matchesBrand = selectedBrand === "all" || med.brand === selectedBrand;
-    return matchesCategory && matchesBrand;
-  });
-  if (sortBy === "priceAsc") {
-    filteredMedicines.sort((a, b) => a.price - b.price);
-  } else if (sortBy === "priceDesc") {
-    filteredMedicines.sort((a, b) => b.price - a.price);
-  } else if (sortBy === "nameAsc") {
-    filteredMedicines.sort((a, b) => a.name.localeCompare(b.name));
-  } else if (sortBy === "nameDesc") {
-    filteredMedicines.sort((a, b) => b.name.localeCompare(a.name));
+  } catch (error) {
+    console.error("Error fetching orders:", err);
+    ordersContainer.innerHTML = `<p>Error loading orders. Try again later.</p>`;
   }
-  displayMedicines(filteredMedicines);
 });
-fetchMedices();

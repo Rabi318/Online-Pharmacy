@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Medi-Sure | Order</title>
+    <link rel="icon" type="image/png" href="../assets/logo.png" />
+    <link rel="stylesheet" href="../css/orders.css" />
+  </head>
+  <body>
+    <header>
+      <nav class="navbar">
+        <div id="logo" class="navbar-left">
+          <img src="../assets/logo.png" alt="logo" />
+        </div>
+        <div class="nav-right">
+          <button class="hamburger" aria-label="Toggle navigation">☰</button>
+          <ul>
+            <li><a href="#">Offers</a></li>
+            <!-- <li><a id="cartLink" href="#">Cart</a></li> -->
+            <li>
+              <a id="cartLink" href="#">
+                Cart <span id="cart-count" class="cart-count">0</span>
+              </a>
+            </li>
+
+            <li class="user-dropdown">
+              <a id="loginLink" href="#">Login</a>
+              <div class="user-menu" id="userMenu" style="display: none">
+                <button id="logoutBtn">Logout</button>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </nav>
+    </header>
+    <!-- Login Modal -->
+    <div class="modal" id="loginModal">
+      <div class="modal-content">
+        <span class="close-button" id="closeModal">&times;</span>
+        <h2>Login</h2>
+        <form id="loginForm">
+          <label for="email">Email:</label>
+          <input
+            type="email"
+            id="email"
+            required
+            placeholder="Enter your email"
+          />
+
+          <label for="password">Password:</label>
+          <input
+            type="password"
+            id="password"
+            required
+            placeholder="Enter your password"
+          />
+
+          <button type="submit">Login</button>
+          <a href="../user/register.html">If you don't have an account?</a>
+        </form>
+      </div>
+    </div>
+
+    <!-- **NEW**: Orders Container -->
+    <main class="orders-container">
+      <!-- this is where your JS will inject each order -->
+      <div id="orders-container"></div>
+    </main>
+    <!-- **NEW**: Template for one order card -->
+    <template id="order-template">
+      <div class="order-card">
+        <!-- Product Lines -->
+        <div class="products">
+          <div class="product-line">
+            <img src="" alt="product image" />
+            <div class="details">
+              <p class="name"></p>
+              <p class="price"></p>
+            </div>
+          </div>
+        </div>
+        <!-- Progress Bar -->
+        <ul class="progress-bar">
+          <li data-step="confirmed">
+            <span class="label">Order<br />Confirmed</span>
+            <span class="timestamp"></span>
+          </li>
+          <li data-step="shipped">
+            <span class="label">Shipped</span>
+            <span class="timestamp"></span>
+          </li>
+          <li data-step="outForDelivery">
+            <span class="label">Out For<br />Delivery</span>
+            <span class="timestamp"></span>
+          </li>
+          <li data-step="delivered">
+            <span class="label">Delivered</span>
+            <span class="timestamp"></span>
+          </li>
+        </ul>
+      </div>
+    </template>
+    <script type="module" src="../firbase-config.js"></script>
+    <script type="module" src="../js/orders.js"></script>
+  </body>
+</html>
