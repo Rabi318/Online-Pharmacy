@@ -141,11 +141,12 @@ img {
 } */
 .products-section {
   display: flex;
-  flex-direction: row; /* Align filter and product container side by side */
+  flex-direction: row;
   gap: 20px;
   max-width: 1200px;
   margin: 0 auto;
   padding: 40px 20px;
+  overflow-y: auto;
 }
 /* Filter Container */
 .filter-container {
@@ -381,4 +382,13 @@ img {
   cursor: pointer;
   padding: 5px 10px;
   font-size: 14px;
+}
+.cart-count {
+  background-color: red;
+  color: white;
+  padding: 2px 6px;
+  border-radius: 50%;
+  font-size: 12px;
+  margin-left: 4px;
+  vertical-align: top;
 }

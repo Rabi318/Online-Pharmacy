@@ -24,6 +24,41 @@ const userMenu = document.getElementById("userMenu");
 const loginForm = document.getElementById("loginForm");
 const productDetatilsContainer = document.getElementById("productContainer");
 const cartLink = document.getElementById("cartLink");
+cartLink.addEventListener("click", (e) => {
+  e.preventDefault();
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      window.location.href = "../user/cart.html";
+    } else {
+      showToast("Please Login to access Your Cart", "error");
+    }
+  });
+});
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    try {
+      const userId = user.uid;
+      const cartRef = ref(database, `carts/${userId}`);
+      const cartSnap = await get(cartRef);
+      const cartItems = cartSnap.exists()
+        ? Object.entries(cartSnap.val()).map(([key, data]) => ({
+            key,
+            ...data,
+            quantity: data.quantity || 1,
+          }))
+        : [];
+      updateCartCount(cartItems);
+    } catch {
+      updateCartCount([]);
+    }
+  } else {
+    updateCartCount([]);
+  }
+});
+function updateCartCount(items) {
+  const cartCountElement = document.getElementById("cart-count");
+  cartCountElement.textContent = items.length;
+}
 hamburger.addEventListener("click", () => {
   navLinks.classList.toggle("show");
 });
@@ -107,15 +142,23 @@ function updateNavbarWithUser(name) {
 }
 
 logoutBtn.addEventListener("click", async () => {
-  await signOut(auth);
-  loginLink.textContent = "Login";
-  loginLink.onclick = null;
-  loginLink.addEventListener("click", (e) => {
-    e.preventDefault();
-    loginModal.style.display = "block";
-  });
-  userMenu.style.display = "none";
-  showToast("Logged out successfully", "success");
+  try {
+    await signOut(auth);
+    loginLink.textContent = "Login";
+    loginLink.onclick = null;
+    loginLink.addEventListener("click", (e) => {
+      e.preventDefault();
+      loginModal.style.display = "block";
+    });
+    userMenu.style.display = "none";
+    showToast("Logged out successfully", "success");
+    setTimeout(() => {
+      window.location.href = "../index.html";
+    }, 1000);
+  } catch (error) {
+    console.error("Logout failed:", err);
+    showToast("Logout failed. Try again.", "error");
+  }
 });
 
 onAuthStateChanged(auth, async (user) => {

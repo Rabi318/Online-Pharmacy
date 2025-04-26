@@ -21,6 +21,18 @@ const logoutBtn = document.getElementById("logoutBtn");
 const userMenu = document.getElementById("userMenu");
 const loginForm = document.getElementById("loginForm");
 const productContainer = document.getElementById("product-container");
+const cartLink = document.getElementById("cartLink");
+
+cartLink.addEventListener("click", (e) => {
+  e.preventDefault();
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      window.location.href = "../user/cart.html";
+    } else {
+      showToast("Please Login to access Your Cart", "error");
+    }
+  });
+});
 hamburger.addEventListener("click", () => {
   navLinks.classList.toggle("show");
 });
@@ -239,4 +251,31 @@ document.getElementById("filterForm").addEventListener("submit", (e) => {
   }
   displayMedicines(filteredMedicines);
 });
+
+//update cart count
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    try {
+      const userId = user.uid;
+      const cartRef = ref(database, `carts/${userId}`);
+      const cartSnap = await get(cartRef);
+      const cartItems = cartSnap.exists()
+        ? Object.entries(cartSnap.val()).map(([key, data]) => ({
+            key,
+            ...data,
+            quantity: data.quantity || 1,
+          }))
+        : [];
+      updateCartCount(cartItems);
+    } catch {
+      updateCartCount([]);
+    }
+  } else {
+    updateCartCount([]);
+  }
+});
+function updateCartCount(items) {
+  const cartCountElement = document.getElementById("cart-count");
+  cartCountElement.textContent = items.length;
+}
 fetchMedices();

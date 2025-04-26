@@ -31,6 +31,18 @@ const searchInput = document.getElementById("search");
 const suggestionsBox = document.getElementById("suggestions");
 const recentBox = document.getElementById("recent");
 const medicineCard = document.getElementById("medicineCard");
+const cartLink = document.getElementById("cartLink");
+
+cartLink.addEventListener("click", (e) => {
+  e.preventDefault();
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      window.location.href = "./user/cart.html";
+    } else {
+      showToast("Please Login to access Your Cart", "error");
+    }
+  });
+});
 document.addEventListener("DOMContentLoaded", () => {
   console.log("Inside the script");
   loginLink.addEventListener("click", (e) => {

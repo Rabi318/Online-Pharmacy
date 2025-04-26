@@ -30,6 +30,11 @@ const closePayment = document.getElementById("closePayment");
 const payNowBtn = document.querySelector(".pay-btn");
 const paymentForm = document.getElementById("paymentForm");
 const logo = document.getElementById("logo");
+const orderBtn = document.getElementById("orderBtn");
+
+orderBtn.addEventListener("click", () => {
+  window.location.href = "../user/orders.html";
+});
 logo.addEventListener("click", () => {
   window.location.href = "../index.html";
 });
@@ -128,6 +133,10 @@ logoutBtn.addEventListener("click", async () => {
   document.getElementById("cart-count").textContent = "0";
 
   showToast("Logged out successfully", "success");
+  setTimeout(() => {
+    // Replace so user can't navigate back to this page
+    window.location.href = "../index.html";
+  }, 1000);
 });
 
 onAuthStateChanged(auth, async (user) => {
