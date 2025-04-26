@@ -20,11 +20,24 @@ const closeModal = document.getElementById("closeModal");
 const logoutBtn = document.getElementById("logoutBtn");
 const userMenu = document.getElementById("userMenu");
 const loginForm = document.getElementById("loginForm");
+const productContainer = document.getElementById("product-container");
+const cartLink = document.getElementById("cartLink");
+
+cartLink.addEventListener("click", (e) => {
+  e.preventDefault();
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      window.location.href = "../user/cart.html";
+    } else {
+      showToast("Please Login to access Your Cart", "error");
+    }
+  });
+});
 hamburger.addEventListener("click", () => {
   navLinks.classList.toggle("show");
 });
 document.addEventListener("DOMContentLoaded", () => {
-  console.log("Inside the script");
+  // console.log("Inside the script");
   loginLink.addEventListener("click", (e) => {
     e.preventDefault();
     loginModal.style.display = "block";
@@ -147,3 +160,122 @@ function showToast(message, type = "info") {
     toast.remove();
   }, 3000);
 }
+
+//Fetch products
+let medArray = [];
+let categories = new Set();
+let brands = new Set();
+async function fetchMedices() {
+  try {
+    const productsRef = ref(database, "medicines/");
+    const snapshot = await get(productsRef);
+    if (snapshot.exists()) {
+      const data = snapshot.val();
+
+      medArray = Object.entries(data).map(([id, value]) => ({
+        id,
+        ...value,
+      }));
+      medArray.forEach((med) => {
+        categories.add(med.category);
+        brands.add(med.brand);
+      });
+      populateFilters();
+    }
+    // console.log(medArray);
+    displayMedicines(medArray);
+  } catch (error) {
+    console.error("Error fetching medicines:", error);
+  }
+}
+function populateFilters() {
+  const categorySelect = document.getElementById("category");
+  categorySelect.innerHTML = `<option value="all">All</option>`;
+  categories.forEach((category) => {
+    const option = document.createElement("option");
+    option.value = category;
+    option.textContent = category;
+    categorySelect.appendChild(option);
+  });
+  const brandSelect = document.getElementById("brand");
+  brandSelect.innerHTML = `<option value="all">All</option>`;
+  brands.forEach((brand) => {
+    const option = document.createElement("option");
+    option.value = brand;
+    option.textContent = brand;
+    brandSelect.appendChild(option);
+  });
+}
+
+//Product card
+function displayMedicines(medicines) {
+  productContainer.innerHTML = ""; // Clear existing content
+  medicines.forEach((med) => {
+    const discountPercent = Math.round(((med.mrp - med.price) / med.mrp) * 100);
+    const card = document.createElement("div");
+    card.className = "product-card";
+    card.innerHTML = `
+      <img src="${med.image}" alt="${med.name}" />
+      <div class="product-title">${med.name}</div>
+      <div>
+        <span class="mrp">MRP ₹${med.mrp}</span>
+        <span class="discount">${discountPercent}% OFF</span>
+      </div>
+      <div class="price">₹${med.price}</div>
+    `;
+    card.addEventListener("click", () => {
+      window.location.href = `./productDetails.html?id=${med.id}`;
+    });
+    productContainer.appendChild(card);
+  });
+}
+document.getElementById("filterForm").addEventListener("submit", (e) => {
+  e.preventDefault();
+  const selectedCategory = document.getElementById("category").value;
+  const selectedBrand = document.getElementById("brand").value;
+  const sortBy = document.getElementById("sortBy").value;
+  let filteredMedicines = medArray.filter((med) => {
+    const matchesCategory =
+      selectedCategory === "all" || med.category === selectedCategory;
+    const matchesBrand = selectedBrand === "all" || med.brand === selectedBrand;
+    return matchesCategory && matchesBrand;
+  });
+  if (sortBy === "priceAsc") {
+    filteredMedicines.sort((a, b) => a.price - b.price);
+  } else if (sortBy === "priceDesc") {
+    filteredMedicines.sort((a, b) => b.price - a.price);
+  } else if (sortBy === "nameAsc") {
+    filteredMedicines.sort((a, b) => a.name.localeCompare(b.name));
+  } else if (sortBy === "nameDesc") {
+    filteredMedicines.sort((a, b) => b.name.localeCompare(a.name));
+  }
+  displayMedicines(filteredMedicines);
+});
+
+//update cart count
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    try {
+      const userId = user.uid;
+      const cartRef = ref(database, `carts/${userId}`);
+      const cartSnap = await get(cartRef);
+      const cartItems = cartSnap.exists()
+        ? Object.entries(cartSnap.val()).map(([key, data]) => ({
+            key,
+            ...data,
+            quantity: data.quantity || 1,
+          }))
+        : [];
+      updateCartCount(cartItems);
+    } catch {
+      updateCartCount([]);
+    }
+  } else {
+    updateCartCount([]);
+  }
+});
+function updateCartCount(items) {
+  const cartCountElement = document.getElementById("cart-count");
+  cartCountElement.textContent = items.length;
+}
+fetchMedices();

@@ -26,10 +26,11 @@
         <button id="closeSidebar">&times;</button>
       </div>
       <ul class="sidebar-links">
-        <li><a href="#">Dashboard</a></li>
+        <li><a id="dashboardLink" href="#">Dashboard</a></li>
         <li><a id="addProductLink" href="#">Add Product</a></li>
-        <li><a href="#">View Users</a></li>
-        <li><a href="#">Orders</a></li>
+        <li><a id="viewProductsLink" href="#">View Products</a></li>
+        <li><a id="viewUsersLink" href="#">View Users</a></li>
+        <li><a id="ordersLink" href="#">Orders</a></li>
         <li><a href="#" id="adminLogoutBtn">Logout</a></li>
       </ul>
     </aside>
@@ -38,6 +39,21 @@
     <main class="content" id="content">
       <h1>Welcome, <span id="adminName">Admin</span></h1>
       <p>Behind Every Click, a Healthier Tomorrow</p>
+      <div id="dashboardStats" class="dashboard-cards" style="display: none">
+        <div class="card" id="userCountCard">
+          <h3>Total Users👤</h3>
+          <p id="userCount">0</p>
+        </div>
+        <div class="card" id="productCountCard">
+          <h3>
+            Total Products<i
+              style="margin-left: 5px"
+              class="fa-solid fa-tablets"
+            ></i>
+          </h3>
+          <p id="productCount">0</p>
+        </div>
+      </div>
     </main>
 
     <!-- Add Form -->
@@ -100,7 +116,112 @@
       </form>
     </section>
 
+    <!-- View Users Section -->
+    <section id="viewUsersSection" class="form-section" style="display: none">
+      <h2>
+        <i class="fas fa-users" style="margin-right: 8px"></i>
+        All Users
+      </h2>
+      <div style="overflow-x: auto">
+        <table id="usersTable">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Gender</th>
+              <th>Role</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- JS will inject one <tr> per user here -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- below View Users section -->
+    <section id="viewOrdersSection" class="form-section" style="display: none">
+      <h2>
+        <i class="fas fa-clipboard-list" style="margin-right: 8px"></i>All
+        Orders
+      </h2>
+      <div style="overflow-x: auto">
+        <table id="ordersTable">
+          <thead>
+            <tr>
+              <th>User ID</th>
+              <th>Order ID</th>
+              <th>Total</th>
+              <th>Pay Method</th>
+              <th>Ordered At</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- rows injected here -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
     <div id="toast-container"></div>
+
+    <!-- View Products Section -->
+    <section id="viewProductsSection" style="display: none">
+      <h2>All Products</h2>
+      <table id="productsTable" border="1">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Category</th>
+            <th>Brand</th>
+            <th>Price</th>
+            <th>Quantity</th>
+            <th>MRP</th>
+            <th>Availability</th>
+            <th>Image</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <!-- Form Popup -->
+    <div id="editProductModal" class="modal">
+      <div class="modal-content">
+        <span id="closeModal" class="close-btn">&times;</span>
+        <h2>Edit Product</h2>
+        <form id="editProductForm">
+          <label for="name">Name:</label>
+          <input type="text" id="name" name="name" required />
+
+          <label for="category">Category:</label>
+          <input type="text" id="category" name="category" required />
+
+          <label for="brand">Brand:</label>
+          <input type="text" id="brand" name="brand" required />
+
+          <label for="price">Price:</label>
+          <input type="number" id="price" name="price" required />
+
+          <label for="quantity">Quantity:</label>
+          <input type="number" id="quantity" name="quantity" required />
+
+          <label for="availability">Availability:</label>
+          <input type="text" id="availability" name="availability" required />
+
+          <label for="mrp">MRP:</label>
+          <input type="number" id="mrp" name="mrp" required />
+
+          <label for="imageUrl">Image URL:</label>
+          <input type="text" id="imageUrl" name="imageUrl" required />
+
+          <button type="submit" id="updateBtn">Update Product</button>
+        </form>
+      </div>
+    </div>
 
     <script type="module" src="dashboard.js"></script>
   </body>

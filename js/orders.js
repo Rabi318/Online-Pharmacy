@@ -3,7 +3,7 @@ import {
   signOut,
   onAuthStateChanged,
 } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
-import { auth, database } from "./firbase-config.js";
+import { auth, database } from "../firbase-config.js";
 import {
   get,
   ref,
@@ -11,40 +11,32 @@ import {
   orderByChild,
   startAt,
   endAt,
+  set,
+  update,
+  remove,
+  runTransaction,
+  push,
 } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-database.js";
-
 const hamburger = document.querySelector(".hamburger");
 const navLinks = document.querySelector(".nav-right ul");
-
-hamburger.addEventListener("click", () => {
-  navLinks.classList.toggle("show");
-});
-
-// At top
 const loginLink = document.getElementById("loginLink");
 const loginModal = document.getElementById("loginModal");
 const closeModal = document.getElementById("closeModal");
 const logoutBtn = document.getElementById("logoutBtn");
 const userMenu = document.getElementById("userMenu");
 const loginForm = document.getElementById("loginForm");
-const searchInput = document.getElementById("search");
-const suggestionsBox = document.getElementById("suggestions");
-const recentBox = document.getElementById("recent");
-const medicineCard = document.getElementById("medicineCard");
-const cartLink = document.getElementById("cartLink");
+const ordersContainer = document.getElementById("orders-container");
+const orderTemplate = document.getElementById("order-template");
+const logo = document.getElementById("logo");
+logo.addEventListener("click", () => {
+  window.location.href = "../index.html";
+});
 
-cartLink.addEventListener("click", (e) => {
-  e.preventDefault();
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      window.location.href = "./user/cart.html";
-    } else {
-      showToast("Please Login to access Your Cart", "error");
-    }
-  });
+hamburger.addEventListener("click", () => {
+  navLinks.classList.toggle("show");
 });
 document.addEventListener("DOMContentLoaded", () => {
-  console.log("Inside the script");
+  // console.log("Inside the script");
   loginLink.addEventListener("click", (e) => {
     e.preventDefault();
     loginModal.style.display = "block";
@@ -60,8 +52,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 });
-
-// login
 
 loginForm.addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -97,7 +87,6 @@ loginForm.addEventListener("submit", async (e) => {
     console.log(error);
   }
 });
-
 function getInitials(name) {
   const parts = name.trim().split(" ");
 
@@ -109,6 +98,7 @@ function getInitials(name) {
   // Otherwise, first letter of first 2 words
   return (parts[0][0] + parts[1][0]).toUpperCase();
 }
+
 function updateNavbarWithUser(name) {
   const initials = getInitials(name);
   loginLink.textContent = initials;
@@ -133,7 +123,13 @@ logoutBtn.addEventListener("click", async () => {
     loginModal.style.display = "block";
   });
   userMenu.style.display = "none";
+  document.getElementById("cart-count").textContent = "0";
+
   showToast("Logged out successfully", "success");
+  setTimeout(() => {
+    // Replace so user can't navigate back to this page
+    window.location.href = "../index.html";
+  }, 1000);
 });
 
 onAuthStateChanged(auth, async (user) => {
@@ -147,31 +143,7 @@ onAuthStateChanged(auth, async (user) => {
     }
   }
 });
-onAuthStateChanged(auth, async (user) => {
-  if (user) {
-    try {
-      const userId = user.uid;
-      const cartRef = ref(database, `carts/${userId}`);
-      const cartSnap = await get(cartRef);
-      const cartItems = cartSnap.exists()
-        ? Object.entries(cartSnap.val()).map(([key, data]) => ({
-            key,
-            ...data,
-            quantity: data.quantity || 1,
-          }))
-        : [];
-      updateCartCount(cartItems);
-    } catch {
-      updateCartCount([]);
-    }
-  } else {
-    updateCartCount([]);
-  }
-});
-function updateCartCount(items) {
-  const cartCountElement = document.getElementById("cart-count");
-  cartCountElement.textContent = items.length;
-}
+
 function closeLoginModal() {
   document.getElementById("loginModal").style.display = "none";
 }
@@ -194,54 +166,108 @@ function showToast(message, type = "info") {
   }, 3000);
 }
 
-//fetch data
-let medicinesArray = [];
-async function fetchMedices() {
-  try {
-    const productsRef = ref(database, "medicines/");
-    const snapshot = await get(productsRef);
-    if (snapshot.exists()) {
-      const data = snapshot.val();
-      medicinesArray = Object.entries(data).map(([id, value]) => ({
-        id,
-        ...value,
-      }));
-      // console.log(medicinesArray);
-    }
-  } catch (error) {
-    console.error("Error fetching medicines:", error);
-  }
+function updateCartCount(items) {
+  const cartCountElement = document.getElementById("cart-count");
+  cartCountElement.textContent = items.length;
 }
-fetchMedices();
+// onAuthStateChanged(auth, async (user) => {
+//   if (user) {
+//     const userId = user.uid;
+//     const cartRef = ref(database, `carts/${userId}`);
+//     try {
+//       const snapShot = await get(cartRef);
+//       const cartItems = Object.entries(snapShot.val()).map(([key, data]) => ({
+//         key,
+//         ...data,
+//         quantity: data.quantity || 1,
+//       }));
+//       updateCartCount(cartItems);
+//     } catch (error) {
+//       updateCartCount([]);
+//     }
+//   }
+// });
 
-searchInput.addEventListener("input", () => {
-  const searchText = searchInput.value.trim().toLowerCase();
-  recentBox.innerHTML = "";
-  if (searchText === "") {
-    suggestionsBox.classList.add("hidden");
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    try {
+      const userId = user.uid;
+      const cartRef = ref(database, `carts/${userId}`);
+      const cartSnap = await get(cartRef);
+      const cartItems = cartSnap.exists()
+        ? Object.entries(cartSnap.val()).map(([key, data]) => ({
+            key,
+            ...data,
+            quantity: data.quantity || 1,
+          }))
+        : [];
+      updateCartCount(cartItems);
+    } catch {
+      updateCartCount([]);
+    }
+  } else {
+    updateCartCount([]);
+  }
+  if (!user) {
+    ordersContainer.innerHTML = `<p>Please log in to view your orders.</p>`;
     return;
   }
-  const matches = medicinesArray
-    .filter((med) => med.name.toLowerCase().startsWith(searchText))
-    .slice(0, 5);
-  if (matches.length > 0) {
-    matches.forEach((med) => {
-      const div = document.createElement("div");
-      div.textContent = med.name;
-      div.classList.add("suggestion-item");
-      div.onclick = () => {
-        searchInput.value = med.name;
-        suggestionsBox.classList.add("hidden");
-        recentBox.innerHTML = "";
-      };
-      recentBox.appendChild(div);
-    });
-    suggestionsBox.classList.remove("hidden");
-  } else {
-    suggestionsBox.classList.add("hidden");
-  }
-});
+  const ordersRef = ref(database, `orders/${user.uid}`);
+  try {
+    const snapshot = await get(ordersRef);
+    if (!snapshot.exists()) {
+      ordersContainer.innerHTML = `<p>You have no orders yet.</p>`;
+      return;
+    }
+    ordersContainer.innerHTML = "";
+    snapshot.forEach((orderSnap) => {
+      const orderData = orderSnap.val();
+      const clone = orderTemplate.content.cloneNode(true);
+      const card = clone.querySelector(".order-card");
 
-medicineCard.addEventListener("click", () => {
-  window.location.href = "./user/product.html";
+      // Render products
+      const productsEl = clone.querySelector(".products");
+      const productTplEl = productsEl.querySelector(".product-line");
+      productsEl.innerHTML = "";
+      orderData.items.forEach((item) => {
+        const line = productTplEl.cloneNode(true);
+        line.querySelector("img").src = item.image;
+        line.querySelector(".name").textContent = item.name;
+        line.querySelector(
+          ".price"
+        ).textContent = `₹${item.price} × ${item.quantity}`;
+        productsEl.appendChild(line);
+      });
+      // Show order total
+      const totalDiv = document.createElement("div");
+      totalDiv.className = "order-total";
+      totalDiv.textContent = `Total: ₹${orderData.total.toFixed(2)}`;
+      card.insertBefore(totalDiv, card.querySelector(".progress-bar"));
+      // Render progress
+      const statusSteps = [
+        "confirmed",
+        "shipped",
+        "outForDelivery",
+        "delivered",
+      ];
+      const timestamps = orderData.timestamps || {};
+      const lis = clone.querySelectorAll(".progress-bar li");
+      lis.forEach((li) => {
+        const step = li.dataset.step;
+        if (orderData.status[step]) {
+          li.classList.add("completed");
+          const tsKey = `${step}At`;
+          if (timestamps[tsKey]) {
+            const d = new Date(timestamps[tsKey]);
+            li.querySelector(".timestamp").textContent =
+              d.toLocaleDateString() + " " + d.toLocaleTimeString();
+          }
+        }
+      });
+      ordersContainer.appendChild(clone);
+    });
+  } catch (error) {
+    console.error("Error fetching orders:", err);
+    ordersContainer.innerHTML = `<p>Error loading orders. Try again later.</p>`;
+  }
 });

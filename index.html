@@ -6,6 +6,7 @@
     <title>Medi-Sure</title>
     <link rel="icon" type="image/png" href="./assets/logo.png" />
     <link rel="stylesheet" href="style.css" />
+    <!-- <link rel="stylesheet" href="./user//cart.html"> -->
   </head>
   <body>
     <header>
@@ -17,7 +18,11 @@
           <button class="hamburger" aria-label="Toggle navigation">☰</button>
           <ul>
             <li><a href="#">Offers</a></li>
-            <li><a href="#">Cart</a></li>
+            <li>
+              <a id="cartLink" href="#">
+                Cart <span id="cart-count" class="cart-count">0</span>
+              </a>
+            </li>
             <li class="user-dropdown">
               <a id="loginLink" href="#">Login</a>
               <div class="user-menu" id="userMenu" style="display: none">
@@ -294,6 +299,6 @@
     </footer>
 
     <script type="module" src="index.js"></script>
-    <script type="module" src="firebase-config.js"></script>
+    <script type="module" src="./firbase-config.js"></script>
   </body>
 </html>
