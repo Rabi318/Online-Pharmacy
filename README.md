@@ -20,34 +20,42 @@ Database: Firebase (Realtime database)
 
 ## Directory Structure
 
+
 online-pharmacy/
-|- admin
-    |-dashboard.html
-    |- dashboard.js
-    |- dashboard.css
-|- assets
-    |- logo.png
-|- css
-    |- cart.css
-    |- orders.css
-    |- product.css
-    |- productDetails.css
-    |- register.css
-|- js
-    |- cart.js
-    |- orders.js
-    |- product.js
-    |- productDetails.js
-    |- register.js
-|- user
-    |- cart.html
-    |- orders.html
-    |- product.html
-    |- productDetails.html
-    |- register.html
-├─ index.html
-├─ style.css
-├─ script.js
-├─ firebase.js
+│
+├── admin/
+│   ├── dashboard.html
+│   ├── dashboard.js
+│   ├── dashboard.css
+│
+├── assets/
+│   └── logo.png
+│
+├── css/
+│   ├── cart.css
+│   ├── orders.css
+│   ├── product.css
+│   ├── productDetails.css
+│   ├── register.css
+│
+├── js/
+│   ├── cart.js
+│   ├── orders.js
+│   ├── product.js
+│   ├── productDetails.js
+│   ├── register.js
+│
+├── user/
+│   ├── cart.html
+│   ├── orders.html
+│   ├── product.html
+│   ├── productDetails.html
+│   ├── register.html
+│
+├── index.html
+├── style.css
+├── script.js
+├── firebase.js
+
 
 
