@@ -56,10 +56,52 @@ online-pharmacy/
 ```
 
 ## Video Walkthrough of the project
+
 - Demo: [https://www.youtube.com/watch?v=f2BY-Aa1tZk](https://www.youtube.com/watch?v=f2BY-Aa1tZk)
 
 ## Video Walkthrough of the codebase
+
 - Demo: [https://www.youtube.com/watch?v=BhsfnEZ-3oY](https://www.youtube.com/watch?v=BhsfnEZ-3oY)
+
+## 🖼️ Screenshots
+
+### 🔍 Landing Page (Main Page)
+
+![Main Page](screenshots/main.png)
+
+### Products Page
+
+![Products Page](screenshots/products.png)
+
+### Product Details Page
+
+![Product Details Page](screenshots/productDetails.png)
+
+### Cart Page
+
+![Cart Page](screenshots/cart.png)
+
+### Orders Page
+
+![Orders Page](screenshots/orders.png)
+
+## Admin Dashboard Screenshots
+
+### Dashboard Page
+
+![Dashboard](screenshots/adminMain.png)
+
+### View Products
+
+![View Products](screenshots/viewProducts.png)
+
+### View Orders
+
+![View Orders](screenshots/viewOrders.png)
+
+### View Users
+
+![View Users](screenshots/viewUsers.png)
 
 ## Features
 
@@ -97,10 +139,12 @@ Steps to use:
 ## Credentials
 
 **User:**
+
 - Email: rabi@gmail.com
 - Password: 123456
 
 **Admin:**
+
 - Email: admin@gmail.com
 - Password: 123456
 
