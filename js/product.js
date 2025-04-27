@@ -252,6 +252,8 @@ document.getElementById("filterForm").addEventListener("submit", (e) => {
   displayMedicines(filteredMedicines);
 });
 
+//category wise click function
+
 //update cart count
 onAuthStateChanged(auth, async (user) => {
   if (user) {

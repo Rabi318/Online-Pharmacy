@@ -50,6 +50,7 @@ dashboardLink.addEventListener("click", async () => {
   content.style.display = "block";
   const dashboardStats = document.getElementById("dashboardStats");
   dashboardStats.style.display = "flex";
+  document.getElementById("revenueChartContainer").style.display = "block";
   // Count users
   try {
     const userSnap = await get(ref(database, `users`));
@@ -71,6 +72,129 @@ dashboardLink.addEventListener("click", async () => {
   } catch (err) {
     document.getElementById("productCount").textContent = "Error";
     console.error("Error counting products:", err);
+  }
+  try {
+    const ordersSnap = await get(ref(database, "orders"));
+    let totalRevenue = 0;
+
+    if (ordersSnap.exists()) {
+      const ordersData = ordersSnap.val();
+      Object.values(ordersData).forEach((userOrders) => {
+        Object.values(userOrders).forEach((order) => {
+          if (order.total) {
+            totalRevenue += order.total;
+          }
+        });
+      });
+    }
+
+    document.getElementById("revenueCount").textContent = `₹${totalRevenue}`;
+  } catch (err) {
+    document.getElementById("revenueCount").textContent = "Error";
+    console.error("Error calculating revenue:", err);
+  }
+  try {
+    const ordersSnap = await get(ref(database, "orders"));
+    const revenueByUser = {};
+    let totalRevenue = 0;
+
+    if (ordersSnap.exists()) {
+      const ordersData = ordersSnap.val();
+      for (const userId in ordersData) {
+        let userRevenue = 0;
+        for (const orderId in ordersData[userId]) {
+          const order = ordersData[userId][orderId];
+          if (order.total && order.status?.confirmed) {
+            userRevenue += order.total;
+            totalRevenue += order.total;
+          }
+        }
+        if (userRevenue > 0) {
+          revenueByUser[userId] = userRevenue;
+        }
+      }
+    }
+
+    // Update total revenue card
+    document.getElementById("revenueCount").textContent = `₹${totalRevenue}`;
+
+    // Prepare chart data
+    const labels = Object.keys(revenueByUser);
+    const data = Object.values(revenueByUser);
+
+    const ctx = document.getElementById("revenueChart").getContext("2d");
+
+    // Create gradient fill for bars
+    const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+    gradient.addColorStop(0, "rgba(0, 153, 255, 0.9)");
+    gradient.addColorStop(1, "rgba(0, 204, 255, 0.4)");
+
+    new Chart(ctx, {
+      type: "bar",
+      data: {
+        labels,
+        datasets: [
+          {
+            label: "Revenue by User",
+            data,
+            backgroundColor: gradient,
+            borderRadius: 6,
+            borderSkipped: false,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        animation: {
+          duration: 1000,
+          easing: "easeOutQuart",
+        },
+        plugins: {
+          legend: {
+            display: false,
+          },
+          tooltip: {
+            backgroundColor: "#333",
+            titleColor: "#fff",
+            bodyColor: "#fff",
+            padding: 10,
+          },
+        },
+        scales: {
+          x: {
+            ticks: {
+              color: "#555",
+              font: {
+                weight: "bold",
+              },
+            },
+            grid: {
+              display: false,
+            },
+          },
+          y: {
+            beginAtZero: true,
+            ticks: {
+              color: "#555",
+              callback: (value) => `₹${value}`,
+            },
+            title: {
+              display: true,
+              text: "Revenue (INR)",
+              color: "#555",
+              font: {
+                weight: "bold",
+              },
+            },
+            grid: {
+              color: "rgba(0, 0, 0, 0.05)",
+            },
+          },
+        },
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching revenue data:", error);
   }
 });
 

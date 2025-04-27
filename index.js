@@ -133,6 +133,7 @@ logoutBtn.addEventListener("click", async () => {
     loginModal.style.display = "block";
   });
   userMenu.style.display = "none";
+  window.location.href = "./index.html";
   showToast("Logged out successfully", "success");
 });
 
@@ -230,9 +231,10 @@ searchInput.addEventListener("input", () => {
       div.textContent = med.name;
       div.classList.add("suggestion-item");
       div.onclick = () => {
-        searchInput.value = med.name;
-        suggestionsBox.classList.add("hidden");
-        recentBox.innerHTML = "";
+        // searchInput.value = med.name;
+        // suggestionsBox.classList.add("hidden");
+        // recentBox.innerHTML = "";
+        window.location.href = `./user/productDetails.html?id=${med.id}`;
       };
       recentBox.appendChild(div);
     });
@@ -245,3 +247,5 @@ searchInput.addEventListener("input", () => {
 medicineCard.addEventListener("click", () => {
   window.location.href = "./user/product.html";
 });
+
+//Category wise click function
