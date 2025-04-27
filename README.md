@@ -58,6 +58,9 @@ online-pharmacy/
 ## Video Walkthrough of the project
 - Demo: [https://www.youtube.com/watch?v=f2BY-Aa1tZk](https://www.youtube.com/watch?v=f2BY-Aa1tZk)
 
+## Video Walkthrough of the codebase
+- Demo: [https://www.youtube.com/watch?v=BhsfnEZ-3oY](https://www.youtube.com/watch?v=BhsfnEZ-3oY)
+
 ## Features
 
 - User Registration and Login (Firebase Authentication)
