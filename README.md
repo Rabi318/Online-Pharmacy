@@ -55,6 +55,9 @@ online-pharmacy/
 ├── firebase.js
 ```
 
+## Video Walkthrough of the project
+- Demo: [https://www.youtube.com/watch?v=f2BY-Aa1tZk](https://www.youtube.com/watch?v=f2BY-Aa1tZk)
+
 ## Features
 
 - User Registration and Login (Firebase Authentication)
