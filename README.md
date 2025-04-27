@@ -58,4 +58,56 @@ online-pharmacy/
 ├── firebase.js
 
 
+## Features
+User Registration and Login (Firebase Authentication)
+
+Browse and Search Medicines
+
+Add Medicines to Cart
+
+Place Orders and View Order History
+
+Real-time updates with Firebase Realtime Database
+
+
+## Design Decisions or Assumptions
+Firebase was chosen to easily manage authentication and database without setting up a custom backend.
+
+A simple UI design was prioritized for easier usage by all age groups.
+
+Focused on building core features first (login, cart, order) before adding extra features.
+
+## Installation & Getting started
+git clone https://github.com/Rabi318/Online-Pharmacy.git
+cd online-pharmacy
+open index.html
+
+## Usage
+Open the deployed site or index.html locally.
+Steps to use:
+
+Register/Login
+
+Browse medicines
+
+Add desired medicines to cart
+
+Place an order
+
+## Credentials
+User:
+Email: rabi@gmail.com
+Password: 123456
+Admin:
+Email: admin@gmail.com
+Password: 123456
+
+## Technology Stack
+HTML5 — Structure
+
+CSS3 — Styling and Responsiveness
+
+JavaScript — Application Logic
+
+Firebase — Authentication and Database
 
